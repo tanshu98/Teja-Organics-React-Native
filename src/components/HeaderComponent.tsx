@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {View, Text, StyleSheet, Image, TextInput} from 'react-native';
+import {View, Text, StyleSheet, Image, TextInput, Platform} from 'react-native';
 import {userProfile} from '../assets';
 import {colors} from '../constants/Colors';
 import {responsiveHeight, responsiveWidth} from 'react-native-responsive-dimensions';
@@ -52,12 +52,15 @@ export class HeaderComponent extends Component<
           />
           
         </View>
+        <View style={styles.NotificationiconContainer}>
         <NotificationIcon
             name="notifications-outline"
             size={24}
             color={colors.grey}
             style={styles.Notificationicon}
           />
+
+        </View>
       </View>
     );
   }
@@ -65,24 +68,20 @@ export class HeaderComponent extends Component<
 
 const styles = StyleSheet.create({
   mainContainer: {
-    marginVertical: 10,
-    // flex: 1,
+    marginVertical: 20,
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent:'center',
-    // marginHorizontal: 20,
     width: responsiveWidth(100),
     gap:20,
-    textAlign: 'center'
   },
   inputWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 20,
     backgroundColor: colors.white,
-    borderRadius: 10,
+    borderRadius: 30,
     justifyContent: 'space-between',
-    elevation: 0,
     color: colors.grey
   },
   inputField: {
@@ -90,7 +89,7 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     backgroundColor: colors.white,
     height: responsiveHeight(6),
-    width: responsiveWidth(30),
+    width: responsiveWidth(40),
     borderRadius: 64,
     fontFamily: fontFamily.sfProDisplayRegular
 
@@ -98,8 +97,12 @@ const styles = StyleSheet.create({
   icon: {
     marginHorizontal: 15,
   },
+  NotificationiconContainer:{
+    backgroundColor: colors.white,
+    borderRadius: 70,
+  },
   Notificationicon:{
-    borderRadius:20
+    padding: 10,  
   }
 });
 

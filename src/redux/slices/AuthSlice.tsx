@@ -97,6 +97,8 @@ console.log('sing in')
       
       if (result.token) {
         await AsyncStorage.setItem('token', result.token);
+        console.log('inside result.token--LOGIN---');
+        
         Toast.show({
           type: 'success',
           text1: 'Login successful!',

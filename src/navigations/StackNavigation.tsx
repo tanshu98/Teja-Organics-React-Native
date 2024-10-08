@@ -21,24 +21,27 @@ interface State {
 }
 const Stack = createNativeStackNavigator();
 export class StackNavigation extends Component<{}, State> {
- 
-
   timerId: NodeJS.Timeout | null = null;
 
   constructor(props: any) {
     super(props);
     this.state = {
       isActive: false,
-      isAuth: null,
+      isAuth: null, // Initially null to signify loading state
     };
   }
 
   userLoggedIn = async () => {
-    // get token
-    const token = await AsyncStorage.getItem('token');
-    console.log("token---StackNavigation---",token);
-    
-    this.setState({isAuth: token ? true : false});
+    try {
+      // Retrieve token from AsyncStorage
+      const token = await AsyncStorage.getItem('token');
+      console.log("token---StackNavigation---", token);
+
+      // Set isAuth state based on token existence
+      this.setState({isAuth: !!token}); // Set to true if token exists, otherwise false
+    } catch (error) {
+      console.error('Error fetching token:', error);
+    }
   };
 
   splashScreenHandler = () => {
@@ -49,6 +52,7 @@ export class StackNavigation extends Component<{}, State> {
 
   componentDidMount(): void {
     this.userLoggedIn();
+    // Splash screen timer
     setTimeout(() => {
       this.splashScreenHandler();
     }, 3000);
@@ -57,99 +61,102 @@ export class StackNavigation extends Component<{}, State> {
   render() {
     const {isActive, isAuth} = this.state;
 
+    // Wait until the splash screen has been shown and authentication state is checked
+    if (!isActive || isAuth === null) {
+      return <SplashScreen />;
+    }
+
     return (
       <NavigationContainer>
         <Stack.Navigator>
-          {!isActive && isAuth === null ? (
+          {/* If user is not authenticated, show Login/Signup screen */}
+          {isAuth === false ? (
             <Stack.Screen
               options={{headerShown: false}}
-              name="Splash Screen"
-              component={SplashScreen}
-            />
+              name="loginSignupScreen">
+              {props => <LoginSignupScreen {...props} />}
+            </Stack.Screen>
           ) : (
-            <>
-              {/* {isAuth === false ? ( // Show login/signup screen if not authenticated */}
-                <Stack.Screen
-                  options={{headerShown: false}}
-                  name="loginSignupScreen">
-                  {props => <LoginSignupScreen {...props} />}
-                </Stack.Screen>
-            
-                <Stack.Screen
-                  options={{headerShown: false}}
-                  name="BottomTabNavigation">
-                  {props => <BottomNavigation {...props} />}
-                </Stack.Screen>
-              
-
-              {/* Other screens */}
-              <Stack.Screen
-                options={{headerShown: false}}
-                name="signup">
-                {props => <Signup {...props} />}
-              </Stack.Screen>
-              <Stack.Screen options={{headerShown: false}} name="Login">
-                {props => <Login {...props} />}
-              </Stack.Screen>
-              <Stack.Screen
-                options={({navigation}) => ({
-                  headerTransparent: true,
-                  headerShown: true,
-                  headerTitleAlign: 'center',
-                  headerLeft: () => (
-                    <TouchableOpacity onPress={() => navigation.goBack()}>
-                      <LeftArrowIcon
-                        name="left"
-                        size={24}
-                        color={colors.darkBlack}
-                        style={styles.icon}
-                      />
-                    </TouchableOpacity>
-                  ),
-                })}
-                name="Otp Verification">
-                {props => <Otp {...props} />}
-              </Stack.Screen>
-              <Stack.Screen
-                options={({navigation}) => ({
-                  headerTransparent: true,
-                  headerShown: true,
-                  headerTitleAlign: 'center',
-                  headerLeft: () => (
-                    <TouchableOpacity onPress={() => navigation.goBack()}>
-                      <LeftArrowIcon
-                        name="left"
-                        size={24}
-                        color={colors.darkBlack}
-                        style={styles.icon}
-                      />
-                    </TouchableOpacity>
-                  ),
-                })}
-                name="Terms & conditions">
-                {props => <TermsAndConditons {...props} />}
-              </Stack.Screen>
-              <Stack.Screen
-                options={{
-                  headerTransparent: true,
-                  headerShown: true,
-                  headerTitleAlign: 'center',
-                  headerLeft: () => (
-                    <TouchableOpacity>
-                      <LeftArrowIcon
-                        name="left"
-                        size={24}
-                        color={colors.darkBlack}
-                        style={styles.icon}
-                      />
-                    </TouchableOpacity>
-                  ),
-                }}
-                name="Forget Password Screen">
-                {props => <ForgotPasswordScreen {...props} />}
-              </Stack.Screen>
-            </>
+            // If user is authenticated, show BottomNavigation (home screen)
+            <Stack.Screen
+              options={{headerShown: false}}
+              name="BottomTabNavigation">
+              {props => <BottomNavigation {...props} />}
+            </Stack.Screen>
           )}
+
+          {/* Other screens converted to the same format */}
+          <Stack.Screen
+            options={{headerShown: false}}
+            name="signup">
+            {props => <Signup {...props} />}
+          </Stack.Screen>
+          
+          <Stack.Screen
+            options={{headerShown: false}}
+            name="Login">
+            {props => <Login {...props} />}
+          </Stack.Screen>
+
+          <Stack.Screen
+            options={({navigation}) => ({
+              headerTransparent: true,
+              headerShown: true,
+              headerTitleAlign: 'center',
+              headerLeft: () => (
+                <TouchableOpacity onPress={() => navigation.goBack()}>
+                  <LeftArrowIcon
+                    name="left"
+                    size={24}
+                    color={colors.darkBlack}
+                    style={styles.icon}
+                  />
+                </TouchableOpacity>
+              ),
+            })}
+            name="Otp Verification">
+            {props => <Otp {...props} />}
+          </Stack.Screen>
+
+          <Stack.Screen
+            options={({navigation}) => ({
+              headerTransparent: true,
+              headerShown: true,
+              headerTitleAlign: 'center',
+              headerLeft: () => (
+                <TouchableOpacity onPress={() => navigation.goBack()}>
+                  <LeftArrowIcon
+                    name="left"
+                    size={24}
+                    color={colors.darkBlack}
+                    style={styles.icon}
+                  />
+                </TouchableOpacity>
+              ),
+            })}
+            name="Terms & conditions">
+            {props => <TermsAndConditons {...props} />}
+          </Stack.Screen>
+
+          <Stack.Screen
+            options={{
+              headerTransparent: true,
+              headerShown: true,
+              headerTitleAlign: 'center',
+              headerLeft: () => (
+                <TouchableOpacity>
+                  <LeftArrowIcon
+                    name="left"
+                    size={24}
+                    color={colors.darkBlack}
+                    style={styles.icon}
+                  />
+                </TouchableOpacity>
+              ),
+            }}
+            name="Forget Password Screen">
+            {props => <ForgotPasswordScreen {...props} />}
+          </Stack.Screen>
         </Stack.Navigator>
         <Toast />
       </NavigationContainer>

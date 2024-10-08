@@ -23,11 +23,11 @@ export class HomeScreen extends Component<IProps> {
         minHeight: responsiveScreenHeight(100),
         backgroundColor: colors.signupBg,
       }}>
-      <StatusBar
+      {/* <StatusBar
         backgroundColor={'rgba(0,0,0,0)'}
         translucent={true}
         barStyle={'light-content'}
-      />
+      /> */}
       <HeaderComponent  />
       {/* <HomeCarousal /> */}
       {/* <BestSeller /> */}
